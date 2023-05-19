@@ -28,6 +28,7 @@ export default class ByodFormCustomizer
     // for the returned promise to resolve before rendering the form.
     Log.info(LOG_SOURCE, 'Activated ByodFormCustomizer with properties:');
     Log.info(LOG_SOURCE, JSON.stringify(this.properties, undefined, 2));
+
     return Promise.resolve();
   }
 

@@ -13,6 +13,7 @@
   },
   "externals": {},
   "localizedResources": {
-    "ByodFormCustomizerStrings": "lib/extensions/byod/loc/{locale}.js"
+    "ByodFormCustomizerStrings": "lib/extensions/byod/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
 }
