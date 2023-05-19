@@ -23,6 +23,6 @@ export default class Byod extends React.Component<IByodProps, {}> {
   }
 
   public render(): React.ReactElement<{}> {
-    return <div className={styles.byod} />;
+    return <div className={styles.byod}><h1>Hello World!  This is my form!</h1></div>;
   }
 }
