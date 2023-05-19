@@ -1,0 +1,22 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "16.18.1",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.9.1"
+    },
+    "version": "1.17.2",
+    "libraryName": "it-byod-custom-form",
+    "libraryId": "88d365be-6e53-4966-856a-95865f6b1411",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "it-byod-custom-form",
+    "solutionShortDescription": "it-byod-custom-form description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "extension",
+    "extensionType": "FormCustomizer"
+  }
+}

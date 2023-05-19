@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "byod-form-customizer": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/byod/ByodFormCustomizer.js",
+          "manifest": "./src/extensions/byod/ByodFormCustomizer.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "ByodFormCustomizerStrings": "lib/extensions/byod/loc/{locale}.js"
+  }
+}

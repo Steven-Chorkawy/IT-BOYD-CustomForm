@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "it-byod-custom-form-client-side-solution",
+    "id": "88d365be-6e53-4966-856a-95865f6b1411",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.17.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "it-byod-custom-form description"
+      },
+      "longDescription": {
+        "default": "it-byod-custom-form description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "it-byod-custom-form Feature",
+        "description": "The feature that activates elements of the it-byod-custom-form solution.",
+        "id": "bf944b4c-a947-417a-a88f-e1b6a800a4bc",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/it-byod-custom-form.sppkg"
+  }
+}
