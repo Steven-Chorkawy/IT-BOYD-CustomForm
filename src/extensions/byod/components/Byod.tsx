@@ -3,9 +3,6 @@ import { Log, FormDisplayMode } from '@microsoft/sp-core-library';
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility';
 import { WidgetSize, Dashboard } from '@pnp/spfx-controls-react/lib/Dashboard';
 
-import { Icon } from '@fluentui/react';
-
-
 export interface IByodProps {
   context: FormCustomizerContext;
   displayMode: FormDisplayMode;
@@ -23,6 +20,8 @@ export default class Byod extends React.Component<IByodProps, {}> {
     super(props);
     this._item = this.props.context.item;
     console.log(this.props);
+    console.log('Item:');
+    console.log(this.props.context.item);
   }
 
   private _item: any;
@@ -36,22 +35,12 @@ export default class Byod extends React.Component<IByodProps, {}> {
   }
 
   public render(): React.ReactElement<{}> {
-    const linkExample = { href: "#" };
-    const calloutItemsExample = [
-      {
-        id: "action_1",
-        title: "Info",
-        icon: <Icon iconName={'Edit'} />,
-      },
-      { id: "action_2", title: "Popup", icon: <Icon iconName={'Add'} /> },
-    ];
-
     return <div>
       <Dashboard
         widgets={[{
           title: "BYOD Submission",
-          widgetActionGroup: calloutItemsExample,
-          size: WidgetSize.Box,
+          // widgetActionGroup: calloutItemsExample,
+          size: WidgetSize.Double,
           body: [
             {
               id: "t1",
@@ -59,48 +48,53 @@ export default class Byod extends React.Component<IByodProps, {}> {
               content: (
                 <div>
                   <h1>{this._item.Title}</h1>
-                  <h4>Submission Date: {this._item.Date}</h4>
-                  <p>Device Model: {this._item.DeviceModel}</p>
+                  <p>Submission Date: {new Date(this._item.Date1).toLocaleDateString()}</p>
+                  <p>Device/ Model: {this._item.DeviceManufacturer}/ {this._item.DeviceModel}</p>
+                  <p>Operating System: {this._item.DeviceOperatingSystem}</p>
                   <p>Wireless Provider: {this._item.WirelessProvider}</p>
                   <p>Contract Type: {this._item.ContractType}</p>
+                  <p>Contract End Date: {new Date(this._item.ContractEndDate).toLocaleDateString('en-US')}</p>
                 </div>
               ),
             },
-          ],
-          link: linkExample,
+          ]
         },
         {
           title: "Approval Status",
-          size: WidgetSize.Double,
-          link: linkExample,
+          size: WidgetSize.Box,
           body: [
             {
               id: 'c2t1',
               title: 'Card 2 Title',
               content: (
                 <div>
-                  <h2>Status: {this._item.Status}</h2>
-                  <p>Manager Approval: ...name here, date here, comments here...</p>
-                  <p>IT Approval: ...name here, date here, comments here..</p>
+                  <h1>{this._item.OData__Status}</h1>
+                  <hr />
+                  <h4>Approval Comments</h4>
+                  <pre>{this._item.ApprovalComments}</pre>
+                  <hr />
+                  <h4>Approval Summary</h4>
+                  <pre>{this._item.ApprovalSummary}</pre>
                 </div>
               )
             }
           ]
         },
-        {
-          title: "Card 3",
-          size: WidgetSize.Double,
-          link: linkExample,
-          body: [
-            {
-              id: 'c2t1',
-              title: 'Card 3 Title - JSON data',
-              content: (<div>
-                {JSON.stringify(this._item)}
-              </div>)
-            }
-          ]
-        }]} />
+          // {
+          //   title: "Card 3",
+          //   size: WidgetSize.Box,
+          //   //link: linkExample,
+          //   body: [
+          //     {
+          //       id: 'c2t1',
+          //       title: 'Card 3 Title - JSON data',
+          //       content: (<div>
+          //         {JSON.stringify(this._item)}
+          //       </div>)
+          //     }
+          //   ]
+          // }
+        ]} />
     </div>;
   }
 }
