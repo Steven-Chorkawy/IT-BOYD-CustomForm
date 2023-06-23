@@ -38,12 +38,12 @@
       }
     },
     "byod_ViewForm": {
-      "pageUrl": "https://claringtonnet.sharepoint.com/teams/BrandisTestSite/_layouts/15/SPListForm.aspx",
+      "pageUrl": "https://claringtonnet.sharepoint.com/sites/InfoTech/_layouts/15/SPListForm.aspx",
       "formCustomizer": {
         "componentId": "f39d0b15-663c-45f0-addf-9b9a3c961248",
         "PageType": 4,
-        "RootFolder": "/teams/BrandisTestSite/Lists/BYOD%20Staff%20Agreement%20Submissions",
-        "ID": 10,
+        "RootFolder": "/sites/InfoTech/Lists/BYOD%20Staff%20Agreement%20Submissions",
+        "ID": 6,
         "properties": {
           "sampleText": "Value"
         }
