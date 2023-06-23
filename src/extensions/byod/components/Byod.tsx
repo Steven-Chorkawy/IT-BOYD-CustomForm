@@ -48,7 +48,7 @@ export default class Byod extends React.Component<IByodProps, {}> {
     return <div>
       <Dashboard
         widgets={[{
-          title: "BYOD Submission",
+          title: "BYOD Submission _ update test",
           widgetActionGroup: calloutItemsExample,
           size: WidgetSize.Box,
           body: [
