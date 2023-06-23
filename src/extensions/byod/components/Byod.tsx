@@ -22,6 +22,7 @@ export default class Byod extends React.Component<IByodProps, {}> {
   constructor(props: IByodProps) {
     super(props);
     this._item = this.props.context.item;
+    console.log(this.props);
   }
 
   private _item: any;
