@@ -40,7 +40,7 @@ export default class Byod extends React.Component<IByodProps, {}> {
         widgets={[{
           title: "BYOD Submission",
           // widgetActionGroup: calloutItemsExample,
-          size: WidgetSize.Double,
+          size: WidgetSize.Box,
           body: [
             {
               id: "t1",
@@ -48,12 +48,13 @@ export default class Byod extends React.Component<IByodProps, {}> {
               content: (
                 <div>
                   <h1>{this._item.Title}</h1>
-                  <p>Submission Date: {new Date(this._item.Date1).toLocaleDateString()}</p>
+                  <p>Submission Date: {this._item.Date1 && new Date(this._item.Date1).toLocaleDateString()}</p>
+                  <p>Final Approval Date: {this._item.FinalApprovalDate && new Date(this._item.FinalApprovalDate).toLocaleDateString()}</p>
                   <p>Device/ Model: {this._item.DeviceManufacturer}/ {this._item.DeviceModel}</p>
                   <p>Operating System: {this._item.DeviceOperatingSystem}</p>
                   <p>Wireless Provider: {this._item.WirelessProvider}</p>
                   <p>Contract Type: {this._item.ContractType}</p>
-                  <p>Contract End Date: {new Date(this._item.ContractEndDate).toLocaleDateString('en-US')}</p>
+                  <p>Contract End Date: {this._item.ContractEndDate && new Date(this._item.ContractEndDate).toLocaleDateString('en-US')}</p>
                 </div>
               ),
             },
