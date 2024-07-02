@@ -6,9 +6,8 @@ import "@pnp/sp/webs";
 import "@pnp/sp/lists/web";
 import "@pnp/sp/items";
 import "@pnp/sp/attachments";
-import { IAttachmentInfo, IEmailProperties, IItem, spfi, SPFx } from "@pnp/sp/presets/all";
-import { DefaultButton, MessageBar, MessageBarType, ProgressIndicator } from '@fluentui/react';
-import { getSP } from '../../../MyHelperMethods/MyHelperMethods';
+import { IAttachmentInfo, IItem, spfi, SPFx } from "@pnp/sp/presets/all";
+import { DefaultButton, MessageBar, MessageBarType, Panel, PrimaryButton, ProgressIndicator, TextField } from '@fluentui/react';
 
 
 export interface IByodProps {
@@ -18,18 +17,21 @@ export interface IByodProps {
   onClose: () => void;
 }
 
+export interface IByodState {
+  isSidePanelOpen: boolean;
+  listItemAttachments?: any;
+  cancelationComments?: string;
+}
+
 const LOG_SOURCE: string = 'Byod';
 
-export default class Byod extends React.Component<IByodProps, any> {
+export default class Byod extends React.Component<IByodProps, IByodState> {
   /**
    *
    */
   constructor(props: IByodProps) {
     super(props);
     this._item = this.props.context.item;
-    console.log(this.props);
-    console.log('Item:');
-    console.log(this.props.context.item);
 
     this.state = {
       listItemAttachments: undefined,
@@ -56,15 +58,15 @@ export default class Byod extends React.Component<IByodProps, any> {
   }
 
   private _onCancelSubmissionClick = async (): Promise<any> => {
+    this.setState({ isSidePanelOpen: true });
 
-
-    let emailProps: IEmailProperties = {
-      To: ['schorkawy@clarington.net'],
-      Subject:'Test PnP Util Email',
-      Body: 'This email was sent from an SPFx webpart without a workflow!  It will only work with internal Clarington.net accounts.'
-    }
-    await getSP().utility.sendEmail(emailProps);
-
+    // ! This code works.  It is commented out to test the side panel function.
+    // let emailProps: IEmailProperties = {
+    //   To: ['schorkawy@clarington.net'],
+    //   Subject: 'Test PnP Util Email',
+    //   Body: 'This email was sent from an SPFx webpart without a workflow!  It will only work with internal Clarington.net accounts.'
+    // }
+    //await getSP().utility.sendEmail(emailProps);
   }
 
   private _item: any;
@@ -79,6 +81,27 @@ export default class Byod extends React.Component<IByodProps, any> {
 
   public render(): React.ReactElement<{}> {
     return <div>
+      <Panel
+        headerText="BYOD Cancelation Form"
+        isOpen={this.state.isSidePanelOpen}
+        closeButtonAriaLabel="Close"
+        onDismiss={() => this.setState({ isSidePanelOpen: false })}
+        onRenderFooterContent={() => {
+          return <div>
+            <p>Saving this form will automatically send an email to Payroll@clarington.net to notify them of the change.</p>
+            <PrimaryButton onClick={() => this.setState({ isSidePanelOpen: false })} styles={{ root: { marginRight: 8 } }}>Save</PrimaryButton>
+            <DefaultButton onClick={() => this.setState({ isSidePanelOpen: false })}>Close</DefaultButton>
+          </div>;
+        }}
+
+      >
+        <TextField
+          label="Cancelation Comments"
+          multiline
+          rows={6}
+          onChange={(event, newValue) => this.setState({ cancelationComments: newValue })}
+        />
+      </Panel>
       <Dashboard
         widgets={
           [{
