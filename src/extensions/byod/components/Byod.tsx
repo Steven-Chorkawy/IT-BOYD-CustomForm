@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Log, FormDisplayMode } from '@microsoft/sp-core-library';
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility';
 import { WidgetSize, Dashboard } from '@pnp/spfx-controls-react/lib/Dashboard';
-
 import "@pnp/sp/webs";
 import "@pnp/sp/lists/web";
 import "@pnp/sp/items";
 import "@pnp/sp/attachments";
-import { IAttachmentInfo, IItem, spfi, SPFx } from "@pnp/sp/presets/all";
-import { MessageBar, MessageBarType, ProgressIndicator } from '@fluentui/react';
+import { IAttachmentInfo, IEmailProperties, IItem, spfi, SPFx } from "@pnp/sp/presets/all";
+import { DefaultButton, MessageBar, MessageBarType, ProgressIndicator } from '@fluentui/react';
+import { getSP } from '../../../MyHelperMethods/MyHelperMethods';
 
 
 export interface IByodProps {
@@ -32,7 +32,8 @@ export default class Byod extends React.Component<IByodProps, any> {
     console.log(this.props.context.item);
 
     this.state = {
-      listItemAttachments: undefined
+      listItemAttachments: undefined,
+      isSidePanelOpen: false
     };
 
     if (this._item.Attachments) {
@@ -54,6 +55,18 @@ export default class Byod extends React.Component<IByodProps, any> {
     return info;
   }
 
+  private _onCancelSubmissionClick = async (): Promise<any> => {
+
+
+    let emailProps: IEmailProperties = {
+      To: ['schorkawy@clarington.net'],
+      Subject:'Test PnP Util Email',
+      Body: 'This email was sent from an SPFx webpart without a workflow!  It will only work with internal Clarington.net accounts.'
+    }
+    await getSP().utility.sendEmail(emailProps);
+
+  }
+
   private _item: any;
 
   public componentDidMount(): void {
@@ -66,7 +79,7 @@ export default class Byod extends React.Component<IByodProps, any> {
 
   public render(): React.ReactElement<{}> {
     return <div>
-      < Dashboard
+      <Dashboard
         widgets={
           [{
             title: "BYOD Submission",
@@ -128,6 +141,11 @@ export default class Byod extends React.Component<IByodProps, any> {
                 content: (
                   <div>
                     <h1>{this._item.OData__Status}</h1>
+                    <DefaultButton
+                      text="Cancel Submission"
+                      iconProps={{ iconName: 'Blocked' }}
+                      onClick={this._onCancelSubmissionClick}
+                    />
                     <hr />
                     <h4>Approval Comments</h4>
                     <pre>{this._item.ApprovalComments}</pre>

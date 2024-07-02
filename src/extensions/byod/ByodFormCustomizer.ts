@@ -7,6 +7,7 @@ import {
 } from '@microsoft/sp-listview-extensibility';
 
 import Byod, { IByodProps } from './components/Byod';
+import { getSP } from '../../MyHelperMethods/MyHelperMethods';
 
 /**
  * If your form customizer uses the ClientSideComponentProperties JSON input,
@@ -28,6 +29,8 @@ export default class ByodFormCustomizer
     // for the returned promise to resolve before rendering the form.
     Log.info(LOG_SOURCE, 'Activated ByodFormCustomizer with properties:');
     Log.info(LOG_SOURCE, JSON.stringify(this.properties, undefined, 2));
+
+    getSP(this.context);
 
     return Promise.resolve();
   }
