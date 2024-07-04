@@ -6,8 +6,9 @@ import "@pnp/sp/webs";
 import "@pnp/sp/lists/web";
 import "@pnp/sp/items";
 import "@pnp/sp/attachments";
-import { IAttachmentInfo, IItem, spfi, SPFx } from "@pnp/sp/presets/all";
-import { DefaultButton, MessageBar, MessageBarType, Panel, PrimaryButton, ProgressIndicator, TextField } from '@fluentui/react';
+import { IAttachmentInfo, IEmailProperties, IItem, spfi, SPFx } from "@pnp/sp/presets/all";
+import { DefaultButton, Link, MessageBar, MessageBarType, Panel, PrimaryButton, ProgressIndicator, TextField } from '@fluentui/react';
+import { getSP } from '../../../MyHelperMethods/MyHelperMethods';
 
 
 export interface IByodProps {
@@ -17,13 +18,20 @@ export interface IByodProps {
   onClose: () => void;
 }
 
+export interface IMyProgressIndicator {
+  description: string;
+  percentComplete: number;
+}
 export interface IByodState {
   isSidePanelOpen: boolean;
   listItemAttachments?: any;
   cancelationComments?: string;
+  myProgressIndicator?: IMyProgressIndicator;
+  showCancellationSuccessMessage: boolean;
 }
 
 const LOG_SOURCE: string = 'Byod';
+const BYOD_LIST_TITLE = 'BYOD Staff Agreement Submissions';
 
 export default class Byod extends React.Component<IByodProps, IByodState> {
   /**
@@ -35,7 +43,8 @@ export default class Byod extends React.Component<IByodProps, IByodState> {
 
     this.state = {
       listItemAttachments: undefined,
-      isSidePanelOpen: false
+      isSidePanelOpen: false,
+      showCancellationSuccessMessage: false
     };
 
     if (this._item.Attachments) {
@@ -47,26 +56,57 @@ export default class Byod extends React.Component<IByodProps, IByodState> {
     }
   }
 
-
   private _getAttachments = async (): Promise<any> => {
     const sp = spfi().using(SPFx(this.props.context as any));
-    const item: IItem = sp.web.lists.getByTitle("BYOD Staff Agreement Submissions").items.getById(this._item.ID);
+    const item: IItem = sp.web.lists.getByTitle(BYOD_LIST_TITLE).items.getById(this._item.ID);
 
     // get all the attachments
     const info: IAttachmentInfo[] = await item.attachmentFiles();
     return info;
   }
 
-  private _onCancelSubmissionClick = async (): Promise<any> => {
-    this.setState({ isSidePanelOpen: true });
+  private _cancelRequest = async (): Promise<void> => {
+    this.setState({ myProgressIndicator: { description: 'Getting Current User.', percentComplete: 10 } });
+    const CURRENT_USER = await getSP().web.currentUser();
 
-    // ! This code works.  It is commented out to test the side panel function.
-    // let emailProps: IEmailProperties = {
-    //   To: ['schorkawy@clarington.net'],
-    //   Subject: 'Test PnP Util Email',
-    //   Body: 'This email was sent from an SPFx webpart without a workflow!  It will only work with internal Clarington.net accounts.'
-    // }
-    //await getSP().utility.sendEmail(emailProps);
+    this.setState({ myProgressIndicator: { description: 'Updating Metadata.', percentComplete: 50 } });
+    await getSP().web.lists.getByTitle(BYOD_LIST_TITLE).items.getById(this._item.ID)
+      .update({
+        "OData__Status": 'Cancelled',
+        "ApprovalComments": `${this._item.ApprovalComments}${CURRENT_USER.Title} - Cancelled - ${this.state.cancelationComments}\n\n`,
+        "ApprovalSummary": `${this._item.ApprovalSummary}\nApprover: ${CURRENT_USER.Title}, ${CURRENT_USER.Email}\nResponse: Cancelled\nCancelled Date: ${new Date().toLocaleString()}\n`
+      });
+  }
+
+  private _sendCancelationEmail = async (): Promise<void> => {
+    const TO_EMAIL_PROPS = ['schorkawy@clarington.net'];
+    this.setState({ myProgressIndicator: { description: `Sending Email to ${TO_EMAIL_PROPS}.`, percentComplete: 75 } });
+    const CURRENT_USER = await getSP().web.currentUser();
+    const BODY_EMAIL_PROPS = `
+    <div>
+    <h2>Notice of BYOD Cancelation</h2>
+    <div>Please cancel the BYOD plan for "${this._item.Title}".</div>
+    <a href="https://claringtonnet.sharepoint.com/sites/InfoTech/_layouts/15/SPListForm.aspx?PageType=4&List=e51fc631%2Dc4da%2D4847%2D8e50%2Da933571c0811&ID=${this._item.ID}">Click Here to View BYOD Submission Details.</a>
+    <br/><br/>
+    <div>Cancelation Comments from ${CURRENT_USER.Title}:</div>
+    <div>"${this.state.cancelationComments}"</div>
+    </div>
+    `;
+    const SUBJECT_EMAIL_PROPS = `BYOD Cancelation - ${this._item.Title}`
+
+    let emailProps: IEmailProperties = {
+      To: TO_EMAIL_PROPS,
+      Subject: SUBJECT_EMAIL_PROPS,
+      Body: BODY_EMAIL_PROPS
+    }
+
+    await getSP().utility.sendEmail(emailProps).catch(reason => { alert('Failed to send') });
+    this.setState({ myProgressIndicator: { description: `Done!`, percentComplete: 100 }, showCancellationSuccessMessage: true });
+  }
+
+  private _updateRecordAndSendCancelationEmail = async (): Promise<void> => {
+    await this._cancelRequest();
+    await this._sendCancelationEmail();
   }
 
   private _item: any;
@@ -88,9 +128,25 @@ export default class Byod extends React.Component<IByodProps, IByodState> {
         onDismiss={() => this.setState({ isSidePanelOpen: false })}
         onRenderFooterContent={() => {
           return <div>
-            <p>Saving this form will automatically send an email to Payroll@clarington.net to notify them of the change.</p>
-            <PrimaryButton onClick={() => this.setState({ isSidePanelOpen: false })} styles={{ root: { marginRight: 8 } }}>Save</PrimaryButton>
-            <DefaultButton onClick={() => this.setState({ isSidePanelOpen: false })}>Close</DefaultButton>
+            <p>Saving this form will automatically send an email to Payroll@clarington.net notifying them of the change.</p>
+            <PrimaryButton onClick={this._updateRecordAndSendCancelationEmail} styles={{ root: { marginRight: 8 } }} disabled={this.state.myProgressIndicator !== undefined}>Save</PrimaryButton>
+            <DefaultButton onClick={() => this.setState({ isSidePanelOpen: false })} disabled={this.state.myProgressIndicator !== undefined}>Close</DefaultButton>
+            {
+              (this.state.myProgressIndicator && this.state.showCancellationSuccessMessage === false) &&
+              <div>
+                <ProgressIndicator label="Saving Cancelation..." description={this.state.myProgressIndicator.description} percentComplete={this.state.myProgressIndicator.percentComplete} />
+              </div>
+            }
+            {
+              this.state.showCancellationSuccessMessage &&
+              <MessageBar messageBarType={MessageBarType.success} isMultiline={true} style={{ marginTop: 5 }}>
+                Success! The Status has been updated and Payroll has been notified.
+                <Link href={window.location.href} underline>
+                  Click Here to View Your Changes.
+                </Link>
+              </MessageBar>
+            }
+
           </div>;
         }}
 
@@ -167,7 +223,7 @@ export default class Byod extends React.Component<IByodProps, IByodState> {
                     <DefaultButton
                       text="Cancel Submission"
                       iconProps={{ iconName: 'Blocked' }}
-                      onClick={this._onCancelSubmissionClick}
+                      onClick={() => this.setState({ isSidePanelOpen: true })}
                     />
                     <hr />
                     <h4>Approval Comments</h4>
