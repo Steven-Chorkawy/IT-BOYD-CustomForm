@@ -3,7 +3,7 @@
   "solution": {
     "name": "it-byod-custom-form-client-side-solution",
     "id": "88d365be-6e53-4966-856a-95865f6b1411",
-    "version": "2.0.0.4",
+    "version": "2.0.0.5",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,

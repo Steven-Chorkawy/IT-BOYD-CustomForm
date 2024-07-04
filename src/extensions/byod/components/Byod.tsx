@@ -79,7 +79,7 @@ export default class Byod extends React.Component<IByodProps, IByodState> {
   }
 
   private _sendCancelationEmail = async (): Promise<void> => {
-    const TO_EMAIL_PROPS = ['schorkawy@clarington.net'];
+    const TO_EMAIL_PROPS = ['payroll@clarington.net'];
     this.setState({ myProgressIndicator: { description: `Sending Email to ${TO_EMAIL_PROPS}.`, percentComplete: 75 } });
     const CURRENT_USER = await getSP().web.currentUser();
     const BODY_EMAIL_PROPS = `
